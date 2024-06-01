@@ -5,7 +5,6 @@ import '../widgets/button_custom_.dart';
 import '../widgets/image_custom.dart';
 import '../widgets/members.dart';
 import '../widgets/mute_switch.dart';
-import '../widgets/searchbar.dart';
 import '../widgets/textbutton_custom.dart';
 import '../utils/color.dart';
 
@@ -23,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _mainscrollController = ScrollController();
   double _titlePadding = 1.0;
   double _avatarOpacity = 0.0;
+  bool _folded = true;
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _scrollToSearchBar() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _mainscrollController.animateTo(
         _mainscrollController.position.minScrollExtent + 240,
         duration: const Duration(milliseconds: 500),
@@ -56,14 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       if (!isSearchEnable) {
         isSearchEnable = true;
+        _folded = !_folded;
         _scrollToSearchBar();
       } else {
-        _mainscrollController.animateTo(
-          _mainscrollController.position.minScrollExtent,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
         isSearchEnable = false;
+        _folded = !_folded;
       }
     });
   }
@@ -149,14 +146,89 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
-                    InkWell(
-                      onTap: _toggleSearch,
-                      child: SizedBox(  
+                    Row(
+                      children: [
+                        Visibility(
+                            visible: _folded,
+                            child: const Text(
+                              "Members",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            )),
+                        const Spacer(),
 
-                        child: SearchBarAnimation(
-                          isSearchEnable: isSearchEnable, 
+                        // Search Bar
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 00),
+                          width: _folded
+                              ? 80
+                              : MediaQuery.of(context).size.width - 35,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: Container(
+                                padding: const EdgeInsets.only(
+                                    left: 6, bottom: 8, top: 8),
+                                child: !_folded
+                                    ? TextField(
+                                        decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.grey[300],
+                                            hintText: "Search member",
+                                            hintStyle: const TextStyle(
+                                                color: blackColor),
+                                            border: const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(32.0)),
+                                              borderSide: BorderSide.none,
+                                            ),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 6.0,
+                                                    horizontal: 20.0)),
+                                      )
+                                    : null,
+                              )),
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 400),
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: InkWell(
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(32),
+                                        topRight: Radius.circular(32),
+                                        bottomLeft: Radius.circular(32),
+                                        bottomRight: Radius.circular(32)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: _folded
+                                          ? const Icon(
+                                              Icons.search,
+                                              color: blackColor,
+                                            )
+                                          : const Text(
+                                              "Cancel",
+                                              style: TextStyle(
+                                                  color: blackColor,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        _toggleSearch();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     Members(),
                   ],

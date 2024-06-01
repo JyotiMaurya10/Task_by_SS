@@ -29,7 +29,7 @@ class _MembersState extends State<Members> {
       itemBuilder: (BuildContext context, int index) {
         final member = members[index];
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(bottom: 16.0),
           child: Column(
             children: [
               const SizedBox(height: 5),

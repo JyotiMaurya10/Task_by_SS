@@ -11,7 +11,7 @@ class TextButtonCustom extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton( 
         onPressed: () {},
-        child: Row(
+        child: Row( 
           children: [
             Icon(iconData, color: color,
               size: 25,
